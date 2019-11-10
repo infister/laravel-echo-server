@@ -168,7 +168,7 @@ export class EchoServer {
      */
     toOthers(socket: any, channel: string, message: any): boolean {
         socket.broadcast.to(channel)
-            .emit(message.event, channel, message.data);
+            .emit(message.event, message.data);
 
         return true
     }
@@ -178,7 +178,7 @@ export class EchoServer {
      */
     toAll(channel: string, message: any): boolean {
         this.server.io.to(channel)
-            .emit(message.event, channel, message.data);
+            .emit(message.event, message.data);
 
         return true
     }
