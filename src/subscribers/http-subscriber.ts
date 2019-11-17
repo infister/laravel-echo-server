@@ -67,7 +67,7 @@ export class HttpSubscriber implements Subscriber {
                 Log.info("Event: " + message.event);
             }
 
-            channels.forEach(function (channel) { channel = channel = channel.substring(18); return broadcast(channel, message); });
+            channels.forEach(function (channel) { channel = channel = channel.substring(this.options.channelOffset); return broadcast(channel, message); });
         } else {
             return this.badResponse(
                 req,
