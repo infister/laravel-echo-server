@@ -39,6 +39,8 @@ export class Cli {
         'LARAVEL_ECHO_SERVER_SSL_KEY': 'sslKeyPath',
         'LARAVEL_ECHO_SERVER_SSL_CHAIN': 'sslCertChainPath',
         'LARAVEL_ECHO_SERVER_SSL_PASS': 'sslPassphrase',
+        'LARAVEL_ECHO_SERVER_CHANNEL_OFFSET': 'channelOffset',
+        'LARAVEL_ECHO_SERVER_SKIP_CHANNEL': 'skipChannel',
     };
 
     /**
