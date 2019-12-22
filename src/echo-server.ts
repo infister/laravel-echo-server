@@ -19,7 +19,8 @@ export class EchoServer {
         authEndpoint: '/broadcasting/auth',
         clients: [],
         channelOffset: 18, // in laravel channel begins with projectname_database:
-        skipChannel: false, // in socket.io channel is not emitted
+        skipChannel: false, // in socket.io channel is not emitted (for all?)
+        skipChannelEvents: [], // in socket.io channel is not emitted
         database: 'redis',
         databaseConfig: {
             redis: {},
@@ -169,7 +170,7 @@ export class EchoServer {
      * Broadcast to others on channel.
      */
     toOthers(socket: any, channel: string, message: any): boolean {
-        if (this.options.skipChannel) {
+        if (this.options.skipChannel || this.options.skipChannelEvents.findIndex((e) => { return e == message.event; }) != -1) {
             socket.broadcast.to(channel)
                 .emit(message.event, message.data);
         } else {
@@ -183,7 +184,7 @@ export class EchoServer {
      * Broadcast to all members on channel.
      */
     toAll(channel: string, message: any): boolean {
-        if (this.options.skipChannel) {
+        if (this.options.skipChannel || this.options.skipChannelEvents.findIndex((e) => { return e == message.event; }) != -1) {
             this.server.io.to(channel)
                 .emit(message.event, message.data);
         } else {
