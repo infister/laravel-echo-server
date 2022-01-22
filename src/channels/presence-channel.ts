@@ -101,17 +101,28 @@ export class PresenceChannel {
     leave(socket: any, channel: string): void {
         this.getMembers(channel).then(members => {
             members = members || [];
-            let member = members.find(member => member.socketId == socket.id);
-            members = members.filter(m => m.socketId != member.socketId);
+            let member
 
-            this.db.set(channel + ':members', members);
-
-            this.isMember(channel, member).then(is_member => {
-                if (!is_member) {
-                    delete member.socketId;
-                    this.onLeave(channel, member);
+            members = members.filter((m) => {
+                if(m.socketId == socket.id) {
+                    member = m
+                    return false
                 }
+
+                return true
             });
+
+            this.db.set(channel + ":members", members);
+
+            if(member) {
+                this.isMember(channel, member).then((is_member) => {
+                    if (!is_member) {
+                        delete member.socketId;
+                        this.onLeave(channel, member);
+                    }
+                });
+            }
+
         }, error => Log.error(error));
     }
 
@@ -119,12 +130,14 @@ export class PresenceChannel {
      * On join event handler.
      */
     onJoin(socket: any, channel: string, member: any): void {
-        this.io
-            .sockets
-            .connected[socket.id]
-            .broadcast
-            .to(channel)
-            .emit('presence:joining', channel, member);
+        if (typeof this.io.sockets.connected[socket.id] != "undefined") {
+            this.io
+                .sockets
+                .connected[socket.id]
+                .broadcast
+                .to(channel)
+                .emit('presence:joining', channel, member);
+        }
     }
 
     /**

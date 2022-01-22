@@ -6,7 +6,7 @@ import { Log } from './log';
 import * as fs from 'fs';
 const packageFile = require('../package.json');
 const { constants } = require('crypto');
-
+const Sentry = require('@sentry/node');
 /**
  * Echo server class.
  */
@@ -23,6 +23,7 @@ export class EchoServer {
         skipChannelEvents: [], // in socket.io channel is not emitted
         database: 'redis',
         databaseConfig: {
+            prefix: '',
             redis: {},
             sqlite: {
                 databasePath: '/database/laravel-echo-server.sqlite'
@@ -31,6 +32,7 @@ export class EchoServer {
         devMode: false,
         host: null,
         port: 6001,
+        sentryDsn: null,
         protocol: "http",
         socketio: {},
         secureOptions: constants.SSL_OP_NO_TLSv1,
@@ -86,6 +88,11 @@ export class EchoServer {
     run(options: any): Promise<any> {
         return new Promise((resolve, reject) => {
             this.options = Object.assign(this.defaultOptions, options);
+            
+            if (options.sentryDsn) {
+                Sentry.init({ dsn: options.sentryDsn });
+            }
+            
             this.startup();
             this.server = new Server(this.options);
 
